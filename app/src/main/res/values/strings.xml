@@ -1,0 +1,11 @@
+<resources>
+    <string name="app_name">ChatApp</string>
+    <string name="usernameHint">Username</string>
+    <string name="emailHint">Email</string>
+    <string name="passwordHint">Password</string>
+    <string name="registerBtn">Register</string>
+    <string name="alreadyRegisteredMessage">Already have an account?</string>
+    <string name="loginBtn">Login</string>
+    <string name="backToRegister">Back to registration</string>
+    <string name="register_txt_select_photo">SELECT PHOTO</string>
+</resources>
