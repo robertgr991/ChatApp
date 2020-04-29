@@ -7,9 +7,12 @@ import android.os.Bundle
 import android.provider.MediaStore
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
+import com.example.chatapp.App
 import com.example.chatapp.R
 import com.example.chatapp.models.dto.CreateUserDTO
 import com.example.chatapp.services.UserService
+import com.example.chatapp.ui.ActivitiesManager
+import com.example.chatapp.ui.chat.LatestMessagesActivity
 import com.example.chatapp.ui.notifiers.ToastNotifier
 import com.example.chatapp.validators.CreateUserValidator
 import kotlinx.android.synthetic.main.activity_register.*
@@ -21,12 +24,18 @@ class RegisterActivity : AppCompatActivity() {
     private val toastNotifier: ToastNotifier by inject()
     private val createUserValidator: CreateUserValidator by inject()
     private var selectedPhotoUri: Uri? = null
+    private var isRegisterDisabled = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        userService.getCurrent()
+
+        if (userService.isLoggedIn()) {
+            ActivitiesManager.redirectToHomepage(this)
+        }
+
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_register)
 
-        val logTag = "RegisterActivity"
         register_btn_select_photo.setOnClickListener {
             val intent = Intent(Intent.ACTION_PICK)
             intent.type = "image/*"
@@ -34,6 +43,10 @@ class RegisterActivity : AppCompatActivity() {
         }
 
         register_btn_register.setOnClickListener {
+            if (isRegisterDisabled) {
+                return@setOnClickListener
+            }
+
             val username = register_txt_username.text.toString()
             val email = register_txt_email.text.toString()
             val password = register_txt_password.text.toString()
@@ -45,20 +58,23 @@ class RegisterActivity : AppCompatActivity() {
                 return@setOnClickListener
             }
 
+            isRegisterDisabled = true
+            register_btn_register.background = this.getDrawable(R.drawable.rounded_btn_disabled)
             userService.create(user, selectedPhotoUri) {
-                // Successful register
+                // Successful register, redirect to homepage
                 if (it == null || it == "") {
-                    Log.d("register", "success")
+                    ActivitiesManager.redirectToHomepage(this)
                 } else {
+                    // Show errors
                     toastNotifier.notify(this, it, toastNotifier.lengthLong)
+                    isRegisterDisabled = false
+                    register_btn_register.background = this.getDrawable(R.drawable.rounded_btn_accent)
                 }
             }
         }
 
         register_txt_already_registered.setOnClickListener {
-            Log.d(logTag, "Already registered")
-            val intent = Intent(this, LoginActivity::class.java)
-            startActivity(intent)
+            ActivitiesManager.redirectToLogin(this)
         }
     }
 
@@ -68,12 +84,9 @@ class RegisterActivity : AppCompatActivity() {
         if (requestCode == 0 && resultCode == Activity.RESULT_OK && data != null) {
             // Selected image
             selectedPhotoUri = data.data
-            Log.d("photo", selectedPhotoUri.toString())
             val bitmap = MediaStore.Images.Media.getBitmap(contentResolver, selectedPhotoUri)
             register_imgview_select_photo.setImageBitmap(bitmap)
             register_btn_select_photo.alpha = 0f
-//            val bitmapDrawable = BitmapDrawable(this.resources, bitmap)
-//            register_btn_select_photo.background = bitmapDrawable
         }
     }
 }
