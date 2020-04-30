@@ -8,4 +8,10 @@
     <string name="loginBtn">Login</string>
     <string name="backToRegister">Back to registration</string>
     <string name="register_txt_select_photo">SELECT PHOTO</string>
+    <string name="nav_new_message">New Message</string>
+    <string name="nav_sign_out">Sign out</string>
+    <string name="new_message_search_hint">Search by username...</string>
+    <string name="new_message_username_placeholder">Username</string>
+    <string name="new_message_image_placeholder">Photo</string>
+    <string name="user_list_user_image_desc">User\'s profile image</string>
 </resources>
