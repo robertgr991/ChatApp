@@ -58,6 +58,24 @@ class UserRepository {
         })
     }
 
+    fun findByUsername(username: String, callback: (Boolean) -> Unit) {
+        database
+            .reference
+            .child("/users")
+            .orderByChild("username")
+            .equalTo(username)
+            .addListenerForSingleValueEvent(object: ValueEventListener {
+                override fun onCancelled(p0: DatabaseError) {
+                    callback(true)
+                }
+
+                override fun onDataChange(snapshot: DataSnapshot) {
+                    val exists = snapshot.getValue(User::class.java) != null
+                    callback(exists)
+                }
+            })
+    }
+
     fun getCurrent(callback: () -> Unit) {
         // Query current user
         database

@@ -1,12 +1,11 @@
 package com.example.chatapp.ui.chat
 
 import android.os.Bundle
-import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.chatapp.App
 import com.example.chatapp.R
-import com.example.chatapp.firebase_events.ChatEventsManager
+import com.example.chatapp.events.firebase.ChatEventsManager
 import com.example.chatapp.models.Message
 import com.example.chatapp.models.User
 import com.example.chatapp.services.ChatService
@@ -17,11 +16,8 @@ import com.google.firebase.database.ChildEventListener
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.squareup.picasso.Picasso
-import de.hdodenhof.circleimageview.CircleImageView
 import kotlinx.android.synthetic.main.activity_chat_log.*
-import kotlinx.android.synthetic.main.activity_new_message.*
 import org.koin.android.ext.android.inject
-import java.util.*
 import kotlin.collections.ArrayList
 
 class ChatLogActivity : AppCompatActivity() {

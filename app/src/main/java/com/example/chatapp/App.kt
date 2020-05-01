@@ -1,15 +1,13 @@
 package com.example.chatapp
 
 import android.app.Application
-import android.content.Context
-import android.content.Intent
-import android.os.Bundle
 import android.util.Log
-import androidx.core.content.ContextCompat
-import androidx.core.content.ContextCompat.startActivity
+import com.example.chatapp.events.eventsModule
 import com.example.chatapp.models.User
-import com.example.chatapp.ui.chat.LatestMessagesActivity
-import com.example.chatapp.ui.user.LoginActivity
+import com.example.chatapp.repositories.repositoriesModule
+import com.example.chatapp.services.servicesModule
+import com.example.chatapp.ui.uiModule
+import com.example.chatapp.validators.validatorsModule
 import org.koin.android.ext.koin.androidContext
 import org.koin.android.ext.koin.androidLogger
 import org.koin.core.context.startKoin
@@ -28,7 +26,14 @@ class App : Application() {
         startKoin{
             androidLogger()
             androidContext(this@App)
-            modules(appModule)
+            modules(
+                appModule,
+                servicesModule,
+                repositoriesModule,
+                uiModule,
+                validatorsModule,
+                eventsModule
+            )
         }
         context = this
     }
