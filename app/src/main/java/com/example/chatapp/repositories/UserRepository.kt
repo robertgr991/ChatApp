@@ -21,6 +21,22 @@ class UserRepository {
     private val storage = Firebase.storage
     private val database = Firebase.database
 
+    fun findById(id: String, callback: (User?) -> Unit) {
+        database
+            .getReference("/users/$id")
+            .addListenerForSingleValueEvent(object: ValueEventListener {
+                override fun onCancelled(p0: DatabaseError) {
+                    callback(null)
+                }
+
+                override fun onDataChange(snapshot: DataSnapshot) {
+                    val user = snapshot.getValue(User::class.java)
+                    callback(user)
+                }
+
+            })
+    }
+
     fun getAll(callback: (ArrayList<User>) -> Unit) {
         val ref = database.getReference("/users")
         ref.addValueEventListener(object: ValueEventListener {
@@ -31,8 +47,6 @@ class UserRepository {
 
                 snapshot.children.forEach {
                     val user = it.getValue(User::class.java)
-                    Log.d("user id", user?.id)
-                    Log.d("currentuser", App.context.currentUser.toString())
 
                     if (user != null && user.id != App.context.currentUser?.id ?: "") {
                         users.add(user)
@@ -41,18 +55,17 @@ class UserRepository {
 
                 callback(users)
             }
-
         })
     }
 
-    fun getCurrent() {
+    fun getCurrent(callback: () -> Unit) {
         // Query current user
         database
             .reference
             .child("/users")
             .orderByChild("id")
             .equalTo(auth.uid)
-            .addValueEventListener(object: ValueEventListener {
+            .addListenerForSingleValueEvent(object: ValueEventListener {
                 override fun onCancelled(error: DatabaseError) {}
 
                 override fun onDataChange(snapshot: DataSnapshot) {
@@ -60,6 +73,8 @@ class UserRepository {
                         val user = it.getValue(User::class.java)
 
                         App.context.currentUser = user
+                        Log.d("CURRENT USER LOG IN", App.context.currentUser.toString())
+                        callback()
                     }
                 }
 

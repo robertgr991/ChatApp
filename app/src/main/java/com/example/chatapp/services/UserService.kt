@@ -16,6 +16,10 @@ class UserService: KoinComponent {
     private val auth = Firebase.auth
     private val userRepository: UserRepository by inject()
 
+    fun findById(id: String, callback: (User?) -> Unit) {
+        userRepository.findById(id, callback)
+    }
+
     fun isLoggedIn(): Boolean {
         return auth.currentUser != null
     }
@@ -24,12 +28,12 @@ class UserService: KoinComponent {
             userRepository.getAll(callback)
     }
 
-    fun getCurrent() {
+    fun getCurrent(callback: () -> Unit) {
         if (auth.uid == null) {
             return
         }
 
-        userRepository.getCurrent()
+        userRepository.getCurrent(callback)
     }
 
     fun create(user: CreateUserDTO, selectedPhotoUri: Uri?, callback: (String?) -> Unit) {
