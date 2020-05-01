@@ -4,6 +4,7 @@ import android.app.Application
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import androidx.core.content.ContextCompat
 import androidx.core.content.ContextCompat.startActivity
 import com.example.chatapp.models.User
@@ -13,7 +14,7 @@ import org.koin.android.ext.koin.androidContext
 import org.koin.android.ext.koin.androidLogger
 import org.koin.core.context.startKoin
 
-class App : Application(){
+class App : Application() {
     var currentUser: User? = null
 
     companion object {
@@ -22,6 +23,7 @@ class App : Application(){
 
     override fun onCreate() {
         super.onCreate()
+        Log.d("App", "Application STARTED")
         // Start Koin
         startKoin{
             androidLogger()

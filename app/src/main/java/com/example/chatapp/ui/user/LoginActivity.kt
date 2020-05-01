@@ -42,8 +42,9 @@ class LoginActivity : AppCompatActivity() {
             userService.signIn(loginUser) {
                 // Successful login
                 if (it == null || it == "") {
-                    userService.getCurrent()
-                    ActivitiesManager.redirectToHomepage(this)
+                    userService.getCurrent() {
+                        ActivitiesManager.redirectToHomepage(this)
+                    }
                 } else {
                     // Show errors
                     toastNotifier.notify(this, it, toastNotifier.lengthLong)

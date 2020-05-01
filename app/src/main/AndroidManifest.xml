@@ -10,8 +10,15 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+        <activity android:name=".ui.chat.ChatLogActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".ui.chat.LatestMessagesActivity" />
+        </activity>
         <activity android:name=".ui.chat.NewMessageActivity">
-            <meta-data android:name="android.support.PARENT_ACTIVITY" android:value=".ui.chat.LatestMessagesActivity"/>
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".ui.chat.LatestMessagesActivity" />
         </activity>
         <activity android:name=".ui.chat.LatestMessagesActivity" />
         <activity android:name=".ui.user.RegisterActivity">

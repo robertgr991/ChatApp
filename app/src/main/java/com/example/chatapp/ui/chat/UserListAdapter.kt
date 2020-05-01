@@ -5,6 +5,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.AdapterView
 import android.widget.Button
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
@@ -15,6 +16,8 @@ import de.hdodenhof.circleimageview.CircleImageView
 import kotlinx.android.synthetic.main.activity_new_message_user.view.*
 
 class UserListAdapter(var users : ArrayList<User>, val context: Context) : RecyclerView.Adapter<UserListAdapter.ViewHolder>() {
+    private var onItemClickListener: ((User) -> Unit)? = null
+
     override fun getItemCount(): Int {
         return users.size
     }
@@ -35,6 +38,16 @@ class UserListAdapter(var users : ArrayList<User>, val context: Context) : Recyc
         } else {
             Picasso.get().load(R.drawable.default_avatar).into(holder.image)
         }
+
+        if (onItemClickListener != null) {
+            holder.itemView.setOnClickListener {
+                onItemClickListener!!(user)
+            }
+        }
+    }
+
+    fun setOnItemClickListener(callback: (User) -> Unit) {
+        onItemClickListener = callback
     }
 
     inner class ViewHolder (view: View) : RecyclerView.ViewHolder(view) {
