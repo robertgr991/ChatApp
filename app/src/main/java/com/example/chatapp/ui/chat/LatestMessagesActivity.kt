@@ -10,7 +10,7 @@ import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.chatapp.App
 import com.example.chatapp.R
-import com.example.chatapp.firebase_events.ChatEventsManager
+import com.example.chatapp.events.firebase.ChatEventsManager
 import com.example.chatapp.models.Message
 import com.example.chatapp.models.User
 import com.example.chatapp.models.dto.MessageWithPartnerUserDTO
@@ -19,12 +19,8 @@ import com.example.chatapp.ui.ActivitiesManager
 import com.google.firebase.database.ChildEventListener
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
-import kotlinx.android.synthetic.main.activity_chat_log.*
 import kotlinx.android.synthetic.main.activity_latest_messages.*
-import kotlinx.android.synthetic.main.activity_new_message.*
 import org.koin.android.ext.android.inject
-import org.koin.java.KoinJavaComponent.inject
-import java.util.*
 import kotlin.collections.ArrayList
 import kotlin.collections.HashMap
 

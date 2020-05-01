@@ -37,7 +37,14 @@ class UserService: KoinComponent {
     }
 
     fun create(user: CreateUserDTO, selectedPhotoUri: Uri?, callback: (String?) -> Unit) {
-        userRepository.create(user, selectedPhotoUri, callback)
+        // Check if username already exists
+        userRepository.findByUsername(user.username) { exists ->
+            if (exists) {
+                callback("Username already exists")
+            } else {
+                userRepository.create(user, selectedPhotoUri, callback)
+            }
+        }
     }
 
     fun signIn(loginUser: UserLoginDTO, callback: (String?) -> Unit) {

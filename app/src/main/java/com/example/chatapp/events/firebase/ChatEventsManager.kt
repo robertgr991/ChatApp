@@ -1,4 +1,4 @@
-package com.example.chatapp.firebase_events
+package com.example.chatapp.events.firebase
 
 import android.util.Log
 import com.example.chatapp.App
