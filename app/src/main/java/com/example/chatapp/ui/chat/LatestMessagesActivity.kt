@@ -22,6 +22,7 @@ import com.example.chatapp.services.UserService
 import com.example.chatapp.ui.ActivitiesManager
 import com.example.chatapp.ui.notifiers.ToastNotifier
 import com.example.chatapp.ui.utils.AlertDialogBuilder
+import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.firebase.database.ChildEventListener
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
@@ -209,6 +210,36 @@ class LatestMessagesActivity : AppCompatActivity() {
         }
         latest_messages_recyclerview.adapter = latestMessagesAdapter
         latest_messages_recyclerview.addItemDecoration(DividerItemDecoration(this, DividerItemDecoration.VERTICAL))
+
+        // Set bottomNavigation
+        val bottomNavigation = findViewById<BottomNavigationView>(R.id.bottom_navigation)
+
+        // Set items
+        bottomNavigation.setSelectedItemId(R.id.dashboard);
+
+        // Item selector
+        bottomNavigation.setOnNavigationItemSelectedListener {
+            when(it.itemId){
+                R.id.dashboard-> {
+                    ActivitiesManager.redirectToHomepage(this)
+                    return@setOnNavigationItemSelectedListener true
+                }
+
+                R.id.profile_edit-> {
+                    // To add edit profile
+                    return@setOnNavigationItemSelectedListener true
+                }
+
+                R.id.signout-> {
+                    userService.signOut()
+                    ActivitiesManager.redirectToLogin(this)
+                    return@setOnNavigationItemSelectedListener true
+                }
+
+            }
+            false
+        }
+
     }
 
     override fun onStart() {
