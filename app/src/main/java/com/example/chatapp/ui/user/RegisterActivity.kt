@@ -27,12 +27,6 @@ class RegisterActivity : AppCompatActivity() {
     private var isRegisterDisabled = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        userService.getCurrent() {
-            if (userService.isLoggedIn()) {
-                ActivitiesManager.redirectToHomepage(this)
-            }
-        }
-
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_register)
 

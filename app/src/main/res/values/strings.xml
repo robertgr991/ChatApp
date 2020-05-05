@@ -10,7 +10,7 @@
     <string name="register_txt_select_photo">SELECT PHOTO</string>
     <string name="nav_new_message">New Message</string>
     <string name="nav_sign_out">Sign out</string>
-    <string name="new_message_search_hint">Search by username...</string>
+    <string name="new_message_search_hint">Search by username…</string>
     <string name="new_message_username_placeholder">Username</string>
     <string name="new_message_image_placeholder">Photo</string>
     <string name="user_list_user_image_desc">User\'s profile image</string>
@@ -26,4 +26,23 @@
     <string name="latest_messages_row_username_placeholder">Username</string>
     <string name="latest_messages_row_message_placeholder">Latest message</string>
     <string name="latest_messages_row_date_placeholder">Date</string>
+    <string name="profile_image_description">Profile image</string>
+    <string name="profile_bio_title">Bio:</string>
+    <string name="profile_email_title">Email:</string>
+    <string name="profile_btn_save">Save</string>
+    <string name="refresh_users_new_message">Refresh</string>
+    <string name="seen_text">Seen</string>
+    <string name="profile_user_no_bio">This user has no bio</string>
+    <string name="latest_messages_confirm_delete_title">Confirm</string>
+    <string name="latest_messages_confirm_delete_text">"Are you sure that you want to delete messages history with this user?"</string>
+    <string name="profile_confirm_block_title">Confirm</string>
+    <string name="profile_confirm_block_text">"Are you sure that you want to block this user?"</string>
+    <string name="profile_confirm_unblock_text">"Are you sure that you want to unblock this user?"</string>
+    <string name="profile_unblock_text">Unblock</string>
+    <string name="profile_block_text">Block</string>
+    <string name="message_copy_text">Copy</string>
+    <string name="message_forward_text">Forward</string>
+    <string name="message_delete_text">Delete</string>
+    <string name="message_seen_details">Details</string>
+    <string name="message_deleted_text">This message was deleted</string>
 </resources>

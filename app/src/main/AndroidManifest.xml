@@ -10,6 +10,16 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+        <activity
+            android:name=".ui.user.LaunchSplashActivity"
+            android:theme="@style/AppTheme.SplashScreen">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity android:name=".ui.user.ProfileActivity" />
         <activity android:name=".ui.chat.ChatLogActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
@@ -21,14 +31,16 @@
                 android:value=".ui.chat.LatestMessagesActivity" />
         </activity>
         <activity android:name=".ui.chat.LatestMessagesActivity" />
-        <activity android:name=".ui.user.RegisterActivity">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
+        <activity android:name=".ui.user.RegisterActivity" />
         <activity android:name=".ui.user.LoginActivity" />
+
+        <service
+            android:name=".services.MessagingServiceFirebase"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="com.google.firebase.MESSAGING_EVENT" />
+            </intent-filter>
+        </service>
     </application>
 
 </manifest>

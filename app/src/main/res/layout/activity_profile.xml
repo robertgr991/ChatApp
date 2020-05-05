@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/colorPrimary"
+    tools:context=".ui.user.ProfileActivity">
+
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/profile_imgview_image"
+        android:layout_width="140dp"
+        android:layout_height="140dp"
+        android:layout_marginTop="16dp"
+        app:civ_border_color="@color/colorAccent"
+        app:civ_border_width="3dp"
+        android:contentDescription="@string/profile_image_description"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/default_avatar" />
+
+    <View
+        android:id="@+id/profile_divider_1"
+        android:layout_width="0dp"
+        android:layout_height="2dp"
+        android:layout_marginTop="24dp"
+        android:background="@color/colorAccent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/profile_imgview_image" />
+
+    <View
+        android:id="@+id/profile_divider_2"
+        android:layout_width="0dp"
+        android:layout_height="2dp"
+        android:layout_marginTop="24dp"
+        android:background="@color/colorAccent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/profile_txt_bio" />
+
+    <View
+        android:id="@+id/profile_divider_2_own"
+        android:layout_width="0dp"
+        android:layout_height="2dp"
+        android:layout_marginTop="16dp"
+        android:background="@color/colorAccent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/profile_txt_bio_own" />
+
+    <TextView
+        android:id="@+id/profile_txt_bio_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="24dp"
+        android:textSize="18sp"
+        android:textColor="@color/colorAccent"
+        android:textStyle="bold"
+        android:text="@string/profile_bio_title"
+        app:layout_constraintStart_toStartOf="parent"
+        android:labelFor="@id/profile_txt_bio_own"
+        app:layout_constraintTop_toBottomOf="@+id/profile_divider_1" />
+
+    <TextView
+        android:id="@+id/profile_txt_bio"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:textColor="@color/colorTextDark"
+        app:layout_constraintStart_toStartOf="@+id/profile_txt_bio_title"
+        app:layout_constraintTop_toBottomOf="@+id/profile_txt_bio_title" />
+
+    <TextView
+        android:id="@+id/profile_txt_email_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="24dp"
+        android:text="@string/profile_email_title"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        android:textColor="@color/colorAccent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/profile_divider_2_own" />
+
+    <Button
+        android:id="@+id/profile_btn_save_changes"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
+        android:background="@drawable/rounded_btn_accent"
+        android:text="@string/profile_btn_save"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        android:textColor="@color/colorPrimary"
+        app:layout_constraintTop_toBottomOf="@+id/profile_txt_email_own" />
+
+    <Button
+        android:id="@+id/profile_btn_block_unblock"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="32dp"
+        android:background="@drawable/rounded_btn_accent"
+        android:textColor="@color/colorPrimary"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/profile_txt_bio" />
+
+    <EditText
+        android:id="@+id/profile_txt_bio_own"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:background="@color/colorPrimary"
+        android:ems="10"
+        android:gravity="start|top"
+        android:inputType="textMultiLine"
+        android:maxLines="5"
+        android:maxLength="30"
+        android:textColor="@color/colorTextDark"
+        app:layout_constraintStart_toStartOf="@+id/profile_txt_bio_title"
+        app:layout_constraintTop_toBottomOf="@+id/profile_txt_bio_title"
+        android:autofillHints="" />
+
+    <Button
+        android:id="@+id/profile_btn_remove_image"
+        android:layout_width="20dp"
+        android:layout_height="20dp"
+        android:layout_marginStart="8dp"
+        android:background="@android:drawable/ic_delete"
+        app:layout_constraintStart_toEndOf="@+id/profile_imgview_image"
+        app:layout_constraintTop_toTopOf="@+id/profile_imgview_image" />
+
+    <TextView
+        android:id="@+id/profile_txt_email_own"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="3dp"
+        android:textColor="@color/colorTextDark"
+        app:layout_constraintStart_toEndOf="@+id/profile_txt_email_title"
+        app:layout_constraintTop_toTopOf="@+id/profile_txt_email_title" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

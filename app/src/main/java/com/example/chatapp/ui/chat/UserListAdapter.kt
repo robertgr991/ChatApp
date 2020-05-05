@@ -1,17 +1,14 @@
 package com.example.chatapp.ui.chat
 
 import android.content.Context
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.AdapterView
-import android.widget.Button
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
 import com.example.chatapp.R
 import com.example.chatapp.models.User
-import com.squareup.picasso.Picasso
 import de.hdodenhof.circleimageview.CircleImageView
 import kotlinx.android.synthetic.main.activity_new_message_user.view.*
 
@@ -33,10 +30,10 @@ class UserListAdapter(var users : ArrayList<User>, val context: Context) : Recyc
         holder.username.text = user.username
 
         if (user.imageName != null) {
-            Picasso.get().load(user.imageName).into(holder.image)
+            Glide.with(context).load(user.imageName).into(holder.image)
 
         } else {
-            Picasso.get().load(R.drawable.default_avatar).into(holder.image)
+            Glide.with(context).load(R.drawable.default_avatar).into(holder.image)
         }
 
         if (onItemClickListener != null) {

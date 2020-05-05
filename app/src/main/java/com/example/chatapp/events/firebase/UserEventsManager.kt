@@ -1,30 +1,26 @@
 package com.example.chatapp.events.firebase
 
-import android.util.Log
 import com.example.chatapp.App
 import com.example.chatapp.models.User
-import com.google.firebase.database.ChildEventListener
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.ValueEventListener
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
-import java.lang.IllegalArgumentException
 
-class ChatEventsManager {
+class UserEventsManager {
     private val database = Firebase.database
-    private val conversationBaseRef = "/messages"
-    private val latestMessagesBaseRef = "/latest_messages"
+    private val usersBase = "/users"
     private val databaseReferences: HashMap<String, DatabaseReference> = HashMap()
 
-    fun onLatestMessageWithUser(user: User, listener: ValueEventListener) {
+    fun onUserToken(user: User, listener: ValueEventListener) {
         if (App.context.currentUser == null) {
             return
         }
 
-        val key = "${latestMessagesBaseRef}/${App.context.currentUser!!.id}/${user.id}"
+        val key = "${usersBase}/${user.id}/deviceToken"
 
         if (databaseReferences[key] != null) {
-            offLatestMessageWithUser(user, listener)
+            offUserToken(user, listener)
         }
 
         val messagesRef = database.getReference(key)
@@ -32,68 +28,68 @@ class ChatEventsManager {
         databaseReferences[key] = messagesRef
     }
 
-    fun offLatestMessageWithUser(user: User, listener: ValueEventListener) {
+    fun offUserToken(user: User, listener: ValueEventListener) {
         if (App.context.currentUser == null) {
             return
         }
 
-        val key = "${latestMessagesBaseRef}/${App.context.currentUser!!.id}/${user.id}"
+        val key = "${usersBase}/${user.id}/deviceToken"
         val ref = databaseReferences[key] ?: return
 
         ref.removeEventListener(listener)
         databaseReferences.remove(key)
     }
 
-    fun onLatestMessages(listener: ChildEventListener) {
+    fun onUserStatus(user: User, listener: ValueEventListener) {
         if (App.context.currentUser == null) {
             return
         }
 
-        val key = "${latestMessagesBaseRef}/${App.context.currentUser!!.id}"
+        val key = "${usersBase}/${user.id}/status"
 
         if (databaseReferences[key] != null) {
-            offLatestMessages(listener)
+            offUserStatus(user, listener)
         }
 
         val messagesRef = database.getReference(key)
-        messagesRef.addChildEventListener(listener)
+        messagesRef.addValueEventListener(listener)
         databaseReferences[key] = messagesRef
     }
 
-    fun offLatestMessages(listener: ChildEventListener) {
+    fun offUserStatus(user: User, listener: ValueEventListener) {
         if (App.context.currentUser == null) {
             return
         }
 
-        val key = "${latestMessagesBaseRef}/${App.context.currentUser!!.id}"
+        val key = "${usersBase}/${user.id}/status"
         val ref = databaseReferences[key] ?: return
 
         ref.removeEventListener(listener)
         databaseReferences.remove(key)
     }
 
-    fun onUserConversation(withUser: User, listener: ChildEventListener) {
+    fun onUserImage(user: User, listener: ValueEventListener) {
         if (App.context.currentUser == null) {
             return
         }
 
-        val key = "${conversationBaseRef}/${App.context.currentUser!!.id}/${withUser.id}"
+        val key = "${usersBase}/${user.id}/imageName"
 
         if (databaseReferences[key] != null) {
-            offUserConversation(withUser, listener)
+            offUserImage(user, listener)
         }
 
         val messagesRef = database.getReference(key)
-        messagesRef.addChildEventListener(listener)
+        messagesRef.addValueEventListener(listener)
         databaseReferences[key] = messagesRef
     }
 
-    fun offUserConversation(withUser: User, listener: ChildEventListener) {
+    fun offUserImage(user: User, listener: ValueEventListener) {
         if (App.context.currentUser == null) {
             return
         }
 
-        val key = "${conversationBaseRef}/${App.context.currentUser!!.id}/${withUser.id}"
+        val key = "${usersBase}/${user.id}/imageName"
         val ref = databaseReferences[key] ?: return
 
         ref.removeEventListener(listener)
