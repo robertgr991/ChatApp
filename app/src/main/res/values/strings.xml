@@ -45,4 +45,13 @@
     <string name="message_delete_text">Delete</string>
     <string name="message_seen_details">Details</string>
     <string name="message_deleted_text">This message was deleted</string>
+    <string name="navigation_compose">Compose</string>
+    <string name="navigation_profile">Profile</string>
+    <string name="navigation_signOut">Sign Out</string>
+    <string name="title_activity_testing">TestingActivity</string>
+    <string name="title_home">Home</string>
+    <string name="title_dashboard">Dashboard</string>
+    <string name="title_notifications">Notifications</string>
+    <string name="chat_log_typing_text">typing…</string>
+    <string name="progress_dialog_text">Loading</string>
 </resources>

@@ -8,6 +8,12 @@ import com.example.chatapp.services.UserService
 import com.example.chatapp.ui.ActivitiesManager
 import org.koin.android.ext.android.inject
 
+/**
+ * Launcher activity
+ *
+ * If user is logged, redirect to homepage, otherwise
+ * redirect to register
+ */
 class LaunchSplashActivity : AppCompatActivity() {
     private val userService: UserService by inject()
 

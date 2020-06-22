@@ -5,9 +5,10 @@ import android.content.DialogInterface
 import android.content.Intent
 import android.graphics.Typeface
 import android.net.Uri
-import android.opengl.Visibility
 import android.os.Bundle
+import android.os.Parcelable
 import android.provider.MediaStore
+import android.util.Log
 import android.view.MenuItem
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
@@ -18,17 +19,29 @@ import com.example.chatapp.models.User
 import com.example.chatapp.models.dto.UpdateUserDTO
 import com.example.chatapp.services.UserService
 import com.example.chatapp.ui.ActivitiesManager
+import com.example.chatapp.ui.chat.NewMessageActivity
 import com.example.chatapp.ui.notifiers.ToastNotifier
 import com.example.chatapp.ui.utils.AlertDialogBuilder
+import com.example.chatapp.ui.utils.ProgressDialog
 import com.example.chatapp.validators.UpdateUserValidator
+import kotlinx.android.parcel.Parcelize
+import kotlinx.android.synthetic.main.activity_new_message.*
 import kotlinx.android.synthetic.main.activity_profile.*
 import org.koin.android.ext.android.inject
 import kotlin.properties.Delegates
+
+/**
+ * Used to save the state between orientation changes
+ */
+@Parcelize
+data class ProfileOrientationState(var hasTouchedImage: Boolean = false, var isSaveEnabled: Boolean = true, var newImageUri: Uri? = null) :
+    Parcelable {}
 
 class ProfileActivity : AppCompatActivity() {
     private val updateUserValidator: UpdateUserValidator by inject()
     private val toastNotifier: ToastNotifier by inject()
     private val userService: UserService by inject()
+    private lateinit var progressDialog: ProgressDialog
     private lateinit var userProfile: User
     private var newImageUri: Uri? = null
     private var hasTouchedImage: Boolean = false
@@ -37,6 +50,13 @@ class ProfileActivity : AppCompatActivity() {
 
     companion object {
         var newUser: User? = null
+        private const val STATE_KEY = "STATE_KEY"
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        // Save changes before orientation change
+        outState.putParcelable(STATE_KEY, ProfileOrientationState(hasTouchedImage, isSaveEnabled, newImageUri))
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -47,10 +67,24 @@ class ProfileActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_profile)
 
+        // Retrieve the modifications made before the orientation change
+        if (savedInstanceState != null) {
+            val savedState = savedInstanceState.getParcelable<ProfileOrientationState>(STATE_KEY)
+
+            if (savedState != null) {
+                newImageUri = savedState.newImageUri
+                hasTouchedImage = savedState.hasTouchedImage
+                isSaveEnabled = savedState.isSaveEnabled
+            }
+        }
+
+        // Set progress dialog
+        progressDialog = ProgressDialog(this)
+
         // Add details on action bar
         if (supportActionBar != null) {
-            supportActionBar?.setDisplayHomeAsUpEnabled(true);
-            supportActionBar?.setDisplayShowHomeEnabled(true);
+            supportActionBar?.setDisplayHomeAsUpEnabled(true)
+            supportActionBar?.setDisplayShowHomeEnabled(true)
 
             userProfile = if (intent.hasExtra("user")) {
                 intent.getParcelableExtra("user")
@@ -74,6 +108,8 @@ class ProfileActivity : AppCompatActivity() {
 
     private fun loadCommonProfile() {
         supportActionBar?.title = "${userProfile.username}'s profile"
+        profile_btn_block_unblock.visibility = View.GONE
+
         if (userProfile.imageName != null) {
             Glide.with(this).load(userProfile.imageName).into(profile_imgview_image)
 
@@ -187,7 +223,9 @@ class ProfileActivity : AppCompatActivity() {
                 return@setOnClickListener
             }
 
+            progressDialog.show()
             userService.update(updateUser) {
+                progressDialog.cancel()
                 enableSave()
 
                 if (it == null || it.isEmpty()) {
@@ -195,6 +233,22 @@ class ProfileActivity : AppCompatActivity() {
                 } else {
                     // Show the error
                     toastNotifier.notify(this, it, toastNotifier.lengthLong)
+                }
+            }
+        }
+
+        // Check if there are changes made before an orientation change
+        if (hasTouchedImage) {
+            if (newImageUri == null) {
+                profile_btn_remove_image.visibility = View.GONE
+                Glide.with(this).load(R.drawable.default_avatar).into(profile_imgview_image)
+            } else {
+                Log.d("ABC", newImageUri.toString())
+                val bitmap = MediaStore.Images.Media.getBitmap(contentResolver, newImageUri)
+                profile_imgview_image.setImageBitmap(bitmap)
+
+                if (profile_btn_remove_image.visibility == View.GONE) {
+                    profile_btn_remove_image.visibility = View.VISIBLE
                 }
             }
         }

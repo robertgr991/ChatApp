@@ -12,6 +12,9 @@ import com.example.chatapp.ui.user.LoginActivity
 import com.example.chatapp.ui.user.ProfileActivity
 import com.example.chatapp.ui.user.RegisterActivity
 
+/**
+ * Used to redirect between activities
+ */
 class ActivitiesManager {
     companion object {
         fun redirectToHomepage(context: Context) {

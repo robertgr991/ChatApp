@@ -15,6 +15,7 @@ import org.koin.core.KoinComponent
 import org.koin.core.inject
 import retrofit2.Callback
 import java.util.*
+import kotlin.collections.ArrayList
 
 class ChatService: KoinComponent {
     private val notificationMessageMaxLength = 20
@@ -23,6 +24,18 @@ class ChatService: KoinComponent {
     private val userRepository: UserRepository by inject()
     // Notifications service
     private val apiService: APIService = Client.getClient("https://fcm.googleapis.com/").create(APIService::class.java)
+
+    fun setTyping(user: User) {
+        chatRepository.setTyping(user)
+    }
+
+    fun setOffTyping() {
+        chatRepository.setOffTyping()
+    }
+
+    fun getAllWithUser(user: User, callback: (ArrayList<Message>) -> Unit) {
+        chatRepository.getAllWithUser(user, callback)
+    }
 
     fun deleteMessageForBoth(user: User, message: Message) {
         // CCan delete a message for both only in the first 'canDeleteMessageFirstHours'

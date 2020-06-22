@@ -75,12 +75,14 @@ class UserService: KoinComponent {
             return
         }
 
+        // User changed/removed his profile photo
         if (updateUser.hasTouchedImage) {
             if (App.context.currentUser!!.imageName != null) {
                 userRepository.removeProfileImage(App.context.currentUser?.imageName!!)
                 App.context.currentUser!!.imageName = null
             }
 
+            // Selected a new photo
             if (updateUser.newImageUri != null) {
                 userRepository.setProfileImage(updateUser.newImageUri) {
                     App.context.currentUser!!.imageName = it
@@ -109,8 +111,8 @@ class UserService: KoinComponent {
         userRepository.signIn(loginUser, callback)
     }
 
-    fun signOut() {
-        userRepository.signOut()
+    fun signOut(callback: (() -> Unit)? = null) {
+        userRepository.signOut(callback)
     }
 
     fun setStatus(status: String) {

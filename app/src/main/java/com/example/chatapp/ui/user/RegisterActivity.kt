@@ -14,6 +14,7 @@ import com.example.chatapp.services.UserService
 import com.example.chatapp.ui.ActivitiesManager
 import com.example.chatapp.ui.chat.LatestMessagesActivity
 import com.example.chatapp.ui.notifiers.ToastNotifier
+import com.example.chatapp.ui.utils.ProgressDialog
 import com.example.chatapp.validators.CreateUserValidator
 import kotlinx.android.synthetic.main.activity_register.*
 import org.koin.android.ext.android.inject
@@ -23,6 +24,7 @@ class RegisterActivity : AppCompatActivity() {
     private val userService: UserService by inject()
     private val toastNotifier: ToastNotifier by inject()
     private val createUserValidator: CreateUserValidator by inject()
+    private lateinit var progressDialog: ProgressDialog
     private var selectedPhotoUri: Uri? = null
     private var isRegisterDisabled = false
 
@@ -30,6 +32,10 @@ class RegisterActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_register)
 
+        // Set progress dialog
+        progressDialog = ProgressDialog(this)
+
+        // Select profile photo
         register_btn_select_photo.setOnClickListener {
             val intent = Intent(Intent.ACTION_PICK)
             intent.type = "image/*"
@@ -47,14 +53,18 @@ class RegisterActivity : AppCompatActivity() {
             val user = CreateUserDTO(username, email, password)
             val validation = createUserValidator.validate(user)
 
+            // Check if input is valid
             if (!validation.status) {
                 toastNotifier.notify(this, validation.messages[0], toastNotifier.lengthLong)
                 return@setOnClickListener
             }
 
+            // Disable the button until process finishes
             isRegisterDisabled = true
             register_btn_register.background = this.getDrawable(R.drawable.rounded_btn_disabled)
+            progressDialog.show()
             userService.create(user, selectedPhotoUri) {
+                progressDialog.cancel()
                 // Successful register, redirect to homepage
                 if (it == null || it == "") {
                     ActivitiesManager.redirectToHomepage(this)
@@ -76,7 +86,7 @@ class RegisterActivity : AppCompatActivity() {
         super.onActivityResult(requestCode, resultCode, data)
 
         if (requestCode == 0 && resultCode == Activity.RESULT_OK && data != null) {
-            // Selected image
+            // Selected photo
             selectedPhotoUri = data.data
             val bitmap = MediaStore.Images.Media.getBitmap(contentResolver, selectedPhotoUri)
             register_imgview_select_photo.setImageBitmap(bitmap)

@@ -105,5 +105,18 @@
             app:layout_constraintBottom_toBottomOf="@+id/chat_log_imgview_image"
             app:layout_constraintStart_toStartOf="@+id/chat_log_txt_username" />
 
+        <TextView
+            android:id="@+id/chat_log_txt_user_typing"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="3dp"
+            android:textSize="13sp"
+            android:textStyle="bold"
+            android:textColor="@color/colorPrimary"
+            android:text="@string/chat_log_typing_text"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="@+id/chat_log_imgview_image"
+            app:layout_constraintStart_toStartOf="@+id/chat_log_txt_username" />
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

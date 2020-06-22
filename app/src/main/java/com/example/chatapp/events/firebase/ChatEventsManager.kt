@@ -14,6 +14,7 @@ class ChatEventsManager {
     private val database = Firebase.database
     private val conversationBaseRef = "/messages"
     private val latestMessagesBaseRef = "/latest_messages"
+    private val typingBaseRef = "/typing"
     private val databaseReferences: HashMap<String, DatabaseReference> = HashMap()
 
     fun onLatestMessageWithUser(user: User, listener: ValueEventListener) {
@@ -66,6 +67,34 @@ class ChatEventsManager {
         }
 
         val key = "${latestMessagesBaseRef}/${App.context.currentUser!!.id}"
+        val ref = databaseReferences[key] ?: return
+
+        ref.removeEventListener(listener)
+        databaseReferences.remove(key)
+    }
+
+    fun onUserTyping(user: User, listener: ValueEventListener) {
+        if (App.context.currentUser == null) {
+            return
+        }
+
+        val key = "${typingBaseRef}/${user.id}"
+
+        if (databaseReferences[key] != null) {
+            offUserTyping(user, listener)
+        }
+
+        val messagesRef = database.getReference(key)
+        messagesRef.addValueEventListener(listener)
+        databaseReferences[key] = messagesRef
+    }
+
+    fun offUserTyping(user: User, listener: ValueEventListener) {
+        if (App.context.currentUser == null) {
+            return
+        }
+
+        val key = "${typingBaseRef}/${user.id}"
         val ref = databaseReferences[key] ?: return
 
         ref.removeEventListener(listener)

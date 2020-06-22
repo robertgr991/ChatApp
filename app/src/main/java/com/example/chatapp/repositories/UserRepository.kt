@@ -253,19 +253,29 @@ class UserRepository {
             }
     }
 
-    fun signOut() {
-        setStatus("offline")
-        auth.signOut()
-        App.context.hasSetToken = false
-        App.context.currentUser = null
+    fun signOut(callback: (() -> Unit)? = null) {
+        setStatus("offline") {
+            auth.signOut()
+            App.context.hasSetToken = false
+            App.context.currentUser = null
+
+            if (callback != null) {
+                callback()
+            }
+        }
     }
 
-    fun setStatus(status: String) {
+    fun setStatus(status: String, callback: (() -> Unit)? = null) {
         if ((status == "online" || status == "offline") && App.context.currentUser != null) {
             database
                 .getReference("${baseUsers}/${App.context.currentUser!!.id}")
                 .child("status")
                 .setValue(status)
+                .addOnCompleteListener {
+                    if (callback != null) {
+                        callback()
+                    }
+                }
         }
     }
 

@@ -13,12 +13,38 @@ import com.google.firebase.database.ValueEventListener
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 import java.util.*
+import kotlin.collections.ArrayList
 
 class ChatRepository {
     private val database = Firebase.database
     private val baseLatest = "/latest_messages"
     private val baseMessages = "/messages"
     private val baseConversation = "/conversations"
+    private val baseTyping = "/typing"
+
+    fun getAllWithUser(user: User, callback: (ArrayList<Message>) -> Unit) {
+        database
+            .getReference("${baseMessages}/${App.context.currentUser!!.id}/${user.id}")
+            .addListenerForSingleValueEvent(object: ValueEventListener {
+                override fun onCancelled(p0: DatabaseError) {
+                    callback(ArrayList())
+                }
+
+                override fun onDataChange(snapshot: DataSnapshot) {
+                    val messages = ArrayList<Message>()
+
+                    snapshot.children.forEach {
+                        val message = it.getValue(Message::class.java)
+
+                        if (message != null) {
+                            messages.add(message)
+                        }
+                    }
+
+                    callback(messages)
+                }
+            })
+    }
 
     fun getLastMessageInConversation(user1: User, user2: User, callback: (Message?) -> Unit) {
         database
@@ -243,6 +269,18 @@ class ChatRepository {
                     callback(snapshot.getValue(String::class.java))
                 }
             })
+    }
+
+    fun setTyping(user: User) {
+        database
+            .getReference("${baseTyping}/${App.context.currentUser!!.id}")
+            .setValue(user.id)
+    }
+
+    fun setOffTyping() {
+        database
+            .getReference("${baseTyping}/${App.context.currentUser!!.id}")
+            .removeValue()
     }
 
     fun setOnConversation(user: User) {

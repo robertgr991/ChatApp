@@ -4,6 +4,9 @@ import java.text.SimpleDateFormat
 import java.util.*
 import java.util.concurrent.TimeUnit
 
+/**
+ * General utilities methods
+ */
 class Utils {
     companion object {
         fun formattedDate(date: Date = Date()): String {
