@@ -21,22 +21,36 @@
             android:id="@+id/chat_log_message_own_date"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginEnd="8dp"
             android:text="@string/chat_log_message_own_date_placeholder"
             android:textColor="@color/colorTextDark"
             android:textSize="12sp"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent" />
+            app:layout_constraintEnd_toStartOf="@+id/chat_log_message_own_seen_mark"
+            app:layout_constraintStart_toStartOf="parent" />
 
         <TextView
             android:id="@+id/chat_log_message_own_content"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginEnd="2dp"
             android:layout_marginBottom="8dp"
             android:maxWidth="240dp"
             android:text="@string/chat_log_message_own_content_placeholder"
             android:textColor="@color/colorAccent"
             app:layout_constraintBottom_toTopOf="@+id/chat_log_message_own_date"
             app:layout_constraintEnd_toEndOf="parent" />
+
+        <ImageView
+            android:id="@+id/chat_log_message_own_seen_mark"
+            android:layout_width="15dp"
+            android:layout_height="15dp"
+            android:layout_marginTop="3dp"
+            android:contentDescription="@string/seen_text"
+            android:visibility="gone"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/chat_log_message_own_date"
+            app:srcCompat="@drawable/check_mark" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -5,6 +5,7 @@ import com.example.chatapp.App
 import com.example.chatapp.models.User
 import com.google.firebase.database.ChildEventListener
 import com.google.firebase.database.DatabaseReference
+import com.google.firebase.database.ValueEventListener
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 import java.lang.IllegalArgumentException
@@ -13,16 +14,41 @@ class ChatEventsManager {
     private val database = Firebase.database
     private val conversationBaseRef = "/messages"
     private val latestMessagesBaseRef = "/latest_messages"
+    private val typingBaseRef = "/typing"
     private val databaseReferences: HashMap<String, DatabaseReference> = HashMap()
 
-    fun onLatestMessages(listener: ChildEventListener) {
-        Log.d("CURRENT USER LATEST", App.context.currentUser.toString())
-
+    fun onLatestMessageWithUser(user: User, listener: ValueEventListener) {
         if (App.context.currentUser == null) {
             return
         }
 
-        Log.d("LATEST", "Listening")
+        val key = "${latestMessagesBaseRef}/${App.context.currentUser!!.id}/${user.id}"
+
+        if (databaseReferences[key] != null) {
+            offLatestMessageWithUser(user, listener)
+        }
+
+        val messagesRef = database.getReference(key)
+        messagesRef.addValueEventListener(listener)
+        databaseReferences[key] = messagesRef
+    }
+
+    fun offLatestMessageWithUser(user: User, listener: ValueEventListener) {
+        if (App.context.currentUser == null) {
+            return
+        }
+
+        val key = "${latestMessagesBaseRef}/${App.context.currentUser!!.id}/${user.id}"
+        val ref = databaseReferences[key] ?: return
+
+        ref.removeEventListener(listener)
+        databaseReferences.remove(key)
+    }
+
+    fun onLatestMessages(listener: ChildEventListener) {
+        if (App.context.currentUser == null) {
+            return
+        }
 
         val key = "${latestMessagesBaseRef}/${App.context.currentUser!!.id}"
 
@@ -32,8 +58,6 @@ class ChatEventsManager {
 
         val messagesRef = database.getReference(key)
         messagesRef.addChildEventListener(listener)
-        Log.d("LATEST LISTENER", key)
-        Log.d("LATEST LISTENER", listener.toString())
         databaseReferences[key] = messagesRef
     }
 
@@ -43,8 +67,34 @@ class ChatEventsManager {
         }
 
         val key = "${latestMessagesBaseRef}/${App.context.currentUser!!.id}"
-        Log.d("OFF LATEST", key)
-        Log.d("OFF LATEST", listener.toString())
+        val ref = databaseReferences[key] ?: return
+
+        ref.removeEventListener(listener)
+        databaseReferences.remove(key)
+    }
+
+    fun onUserTyping(user: User, listener: ValueEventListener) {
+        if (App.context.currentUser == null) {
+            return
+        }
+
+        val key = "${typingBaseRef}/${user.id}"
+
+        if (databaseReferences[key] != null) {
+            offUserTyping(user, listener)
+        }
+
+        val messagesRef = database.getReference(key)
+        messagesRef.addValueEventListener(listener)
+        databaseReferences[key] = messagesRef
+    }
+
+    fun offUserTyping(user: User, listener: ValueEventListener) {
+        if (App.context.currentUser == null) {
+            return
+        }
+
+        val key = "${typingBaseRef}/${user.id}"
         val ref = databaseReferences[key] ?: return
 
         ref.removeEventListener(listener)
@@ -59,7 +109,7 @@ class ChatEventsManager {
         val key = "${conversationBaseRef}/${App.context.currentUser!!.id}/${withUser.id}"
 
         if (databaseReferences[key] != null) {
-            throw IllegalArgumentException("Listener already added!")
+            offUserConversation(withUser, listener)
         }
 
         val messagesRef = database.getReference(key)

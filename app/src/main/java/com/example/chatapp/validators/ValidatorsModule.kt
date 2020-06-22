@@ -6,4 +6,5 @@ import org.koin.dsl.module
 val validatorsModule = module {
     single { CreateUserValidator() }
     single { CreateMessageValidator() }
+    single { UpdateUserValidator() }
 }

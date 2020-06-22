@@ -66,11 +66,11 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
-            android:textStyle="bold"
+            android:layout_marginTop="2dp"
             android:text="@string/chat_log_username_placeholder"
-            android:textSize="16sp"
             android:textColor="@color/colorPrimary"
-            app:layout_constraintBottom_toBottomOf="@+id/chat_log_imgview_image"
+            android:textSize="16sp"
+            android:textStyle="bold"
             app:layout_constraintStart_toEndOf="@+id/chat_log_imgview_image"
             app:layout_constraintTop_toTopOf="@+id/chat_log_imgview_image" />
 
@@ -94,6 +94,29 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/chat_log_txt_user_status"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="3dp"
+            android:textSize="13sp"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toBottomOf="@+id/chat_log_imgview_image"
+            app:layout_constraintStart_toStartOf="@+id/chat_log_txt_username" />
+
+        <TextView
+            android:id="@+id/chat_log_txt_user_typing"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="3dp"
+            android:textSize="13sp"
+            android:textStyle="bold"
+            android:textColor="@color/colorPrimary"
+            android:text="@string/chat_log_typing_text"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="@+id/chat_log_imgview_image"
+            app:layout_constraintStart_toStartOf="@+id/chat_log_txt_username" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

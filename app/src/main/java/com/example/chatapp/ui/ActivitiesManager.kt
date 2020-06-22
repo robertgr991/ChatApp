@@ -4,11 +4,17 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import androidx.core.content.ContextCompat.startActivity
+import com.example.chatapp.models.User
+import com.example.chatapp.ui.chat.ChatLogActivity
 import com.example.chatapp.ui.chat.LatestMessagesActivity
 import com.example.chatapp.ui.chat.NewMessageActivity
 import com.example.chatapp.ui.user.LoginActivity
+import com.example.chatapp.ui.user.ProfileActivity
 import com.example.chatapp.ui.user.RegisterActivity
 
+/**
+ * Used to redirect between activities
+ */
 class ActivitiesManager {
     companion object {
         fun redirectToHomepage(context: Context) {
@@ -31,6 +37,18 @@ class ActivitiesManager {
 
         fun redirectToNewMessage(context: Context) {
             val intent = Intent(context, NewMessageActivity::class.java)
+            startActivity(context, intent, Bundle())
+        }
+
+        fun redirectToChatWithUser(context: Context, user: User) {
+            val intent = Intent(context, ChatLogActivity::class.java)
+            intent.putExtra("user", user)
+            startActivity(context, intent, Bundle())
+        }
+
+        fun redirectToProfile(context: Context, userProfile: User) {
+            val intent = Intent(context, ProfileActivity::class.java)
+            intent.putExtra("user", userProfile)
             startActivity(context, intent, Bundle())
         }
     }

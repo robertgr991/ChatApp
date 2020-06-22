@@ -6,11 +6,13 @@ import com.example.chatapp.App
 import com.example.chatapp.models.User
 import com.example.chatapp.models.dto.CreateUserDTO
 import com.example.chatapp.models.dto.UserLoginDTO
+import com.google.android.gms.tasks.OnCompleteListener
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.ValueEventListener
 import com.google.firebase.database.ktx.database
+import com.google.firebase.iid.FirebaseInstanceId
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.ktx.storage
 import java.util.*
@@ -20,6 +22,77 @@ class UserRepository {
     private val auth = Firebase.auth
     private val storage = Firebase.storage
     private val database = Firebase.database
+    private val baseBlock = "/block"
+    private val baseUsers = "/users"
+    private val baseImages = "/images"
+
+    fun isBlockedBy(user: User, byUser: User, callback: (Boolean) -> Unit) {
+        database
+            .getReference("${baseBlock}/${byUser.id}/${user.id}")
+            .addListenerForSingleValueEvent(object: ValueEventListener {
+                override fun onCancelled(p0: DatabaseError) {
+                    callback(false)
+                }
+
+                override fun onDataChange(snapshot: DataSnapshot) {
+                    val isBlocked = snapshot.getValue(String::class.java) != null
+                    callback(isBlocked)
+                }
+            })
+    }
+
+    fun blockUser(user: User) {
+        database
+            .getReference("${baseBlock}/${App.context.currentUser!!.id}/${user.id}")
+            .setValue("blocked")
+    }
+
+    fun unBlockUser(user: User) {
+        database
+            .getReference("${baseBlock}/${App.context.currentUser!!.id}/${user.id}")
+            .removeValue()
+    }
+
+    fun isUserBlocked(user: User, callback: (Boolean) -> Unit) {
+        database
+            .getReference("${baseBlock}/${App.context.currentUser!!.id}/${user.id}")
+            .addListenerForSingleValueEvent(object: ValueEventListener {
+                override fun onCancelled(p0: DatabaseError) {
+                    callback(false)
+                }
+
+                override fun onDataChange(snapshot: DataSnapshot) {
+                    val isBlocked = snapshot.getValue(String::class.java) != null
+                    callback(isBlocked)
+                }
+            })
+    }
+
+
+    fun setProfileImage(uri: Uri, callback: (String?) -> Unit) {
+        val fileName: String? = UUID.randomUUID().toString()
+        val imageRef = storage.getReference("/images/$fileName")
+        imageRef.putFile(uri)
+            .addOnSuccessListener {
+                imageRef.downloadUrl
+                    .addOnSuccessListener {imageUrl ->
+                        if (imageUrl != null) {
+                            callback(imageUrl.toString())
+                        } else {
+                            callback(null)
+                        }
+                    }
+                    .addOnFailureListener {
+                        callback(null)
+                    }
+            }
+    }
+
+    fun removeProfileImage(url: String) {
+        storage
+            .getReferenceFromUrl(url)
+            .delete()
+    }
 
     fun findById(id: String, callback: (User?) -> Unit) {
         database
@@ -38,8 +111,8 @@ class UserRepository {
     }
 
     fun getAll(callback: (ArrayList<User>) -> Unit) {
-        val ref = database.getReference("/users")
-        ref.addValueEventListener(object: ValueEventListener {
+        val ref = database.getReference(baseUsers)
+        ref.addListenerForSingleValueEvent(object: ValueEventListener {
             override fun onCancelled(error: DatabaseError) {}
 
             override fun onDataChange(snapshot: DataSnapshot) {
@@ -61,7 +134,7 @@ class UserRepository {
     fun findByUsername(username: String, callback: (Boolean) -> Unit) {
         database
             .reference
-            .child("/users")
+            .child(baseUsers)
             .orderByChild("username")
             .equalTo(username)
             .addListenerForSingleValueEvent(object: ValueEventListener {
@@ -76,23 +149,25 @@ class UserRepository {
             })
     }
 
-    fun getCurrent(callback: () -> Unit) {
+    fun getCurrent(callback: (User?) -> Unit) {
         // Query current user
         database
             .reference
-            .child("/users")
+            .child(baseUsers)
             .orderByChild("id")
             .equalTo(auth.uid)
             .addListenerForSingleValueEvent(object: ValueEventListener {
-                override fun onCancelled(error: DatabaseError) {}
+                override fun onCancelled(error: DatabaseError) {
+                    callback(null)
+                }
 
                 override fun onDataChange(snapshot: DataSnapshot) {
                     snapshot.children.forEach {
                         val user = it.getValue(User::class.java)
 
                         App.context.currentUser = user
-                        Log.d("CURRENT USER LOG IN", App.context.currentUser.toString())
-                        callback()
+                        setStatus("online")
+                        callback(user)
                     }
                 }
 
@@ -106,30 +181,46 @@ class UserRepository {
 
                 if (selectedPhotoUri != null) {
                     val fileName: String? = UUID.randomUUID().toString()
-                    val imageRef = storage.getReference("/images/$fileName")
+                    val imageRef = storage.getReference("${baseImages}/$fileName")
                     imageRef.putFile(selectedPhotoUri)
                         .addOnSuccessListener {
                             imageRef.downloadUrl
                                 .addOnSuccessListener {imageUrl ->
                                     if (imageUrl != null) {
                                         persist(User(userId, user.username, user.email, imageUrl.toString())) { message ->
+                                            if (message == null || message == "") {
+                                                setStatus("online")
+                                            }
+
                                             callback(message)
                                         }
                                     }
                                 }
                                 .addOnFailureListener {
                                     persist(User(userId, user.username, user.email)) { message ->
+                                        if (message == null || message == "") {
+                                            setStatus("online")
+                                        }
+
                                         callback(message)
                                     }
                                 }
                         }
                         .addOnFailureListener {
                             persist(User(userId, user.username, user.email)) { message ->
+                                if (message == null || message == "") {
+                                    setStatus("online")
+                                }
+
                                 callback(message)
                             }
                         }
                 } else {
                     persist(User(userId, user.username, user.email)) { message ->
+                        if (message == null || message == "") {
+                            setStatus("online")
+                        }
+
                         callback(message)
                     }
                 }
@@ -142,6 +233,7 @@ class UserRepository {
     fun signIn(loginUser: UserLoginDTO, callback: (String?) -> Unit) {
         auth.signInWithEmailAndPassword(loginUser.email, loginUser.password)
             .addOnSuccessListener {
+                setStatus("online")
                 callback("")
             }
             .addOnFailureListener {
@@ -150,7 +242,7 @@ class UserRepository {
     }
 
     fun persist(user: User, callback: (String?) -> Unit) {
-        val ref = database.getReference("/users/${user.id}")
+        val ref = database.getReference("${baseUsers}/${user.id}")
         ref.setValue(user)
             .addOnSuccessListener {
                 App.context.currentUser = user
@@ -161,7 +253,51 @@ class UserRepository {
             }
     }
 
-    fun signOut() {
-        auth.signOut()
+    fun signOut(callback: (() -> Unit)? = null) {
+        setStatus("offline") {
+            auth.signOut()
+            App.context.hasSetToken = false
+            App.context.currentUser = null
+
+            if (callback != null) {
+                callback()
+            }
+        }
+    }
+
+    fun setStatus(status: String, callback: (() -> Unit)? = null) {
+        if ((status == "online" || status == "offline") && App.context.currentUser != null) {
+            database
+                .getReference("${baseUsers}/${App.context.currentUser!!.id}")
+                .child("status")
+                .setValue(status)
+                .addOnCompleteListener {
+                    if (callback != null) {
+                        callback()
+                    }
+                }
+        }
+    }
+
+    fun setDeviceToken(token: String) {
+       if (App.context.currentUser != null) {
+           database
+               .getReference("${baseUsers}/${App.context.currentUser!!.id}")
+               .child("deviceToken")
+               .setValue(token)
+       }
+    }
+
+    fun getCurrentToken(callback: (String?) -> Unit) {
+        FirebaseInstanceId.getInstance().instanceId
+            .addOnCompleteListener { task ->
+                if (!task.isSuccessful) {
+                    callback(null)
+                }
+
+                // Get new Instance ID token
+                val token = task.result?.token
+                callback(token)
+            }
     }
 }
