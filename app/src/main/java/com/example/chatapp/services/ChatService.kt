@@ -38,9 +38,11 @@ class ChatService: KoinComponent {
     }
 
     fun deleteMessageForBoth(user: User, message: Message) {
-        // CCan delete a message for both only in the first 'canDeleteMessageFirstHours'
+        // Can delete a message for both only in the first 'canDeleteMessageFirstHours'
         if (Utils.dateDiffInHours(message.date, Date()) <= canDeleteMessageFirstHours) {
             chatRepository.deleteMessageForBoth(user, message)
+        } else {
+            chatRepository.deleteMessageForMe(user, message)
         }
     }
 
@@ -68,7 +70,7 @@ class ChatService: KoinComponent {
         chatRepository.removeMessagesWithUser(user, callback)
     }
 
-    fun sendMessage(content: Any, toUser: User, callback: (Boolean, String?) -> Unit) {
+    fun sendMessage(content: Any, toUser: User, callback: ((Boolean, String?) -> Unit)? = null) {
         if (App.context.currentUser == null) {
             return
         }
@@ -76,21 +78,33 @@ class ChatService: KoinComponent {
         // Check if one of the users blocked the other one
         userRepository.isBlockedBy(toUser, App.context.currentUser!!) {
             if (it) {
-                callback(false, "You blocked this user")
+                if (callback != null) {
+                    callback(false, "You blocked this user")
+                }
                 return@isBlockedBy
             }
 
             userRepository.isBlockedBy(App.context.currentUser!!, toUser) secondBlockVerify@{ hasBlocked ->
                 if (hasBlocked) {
-                    callback(false, "This user has blocked you")
+                    if (callback != null) {
+                        callback(false, "This user has blocked you")
+                    }
                     return@secondBlockVerify
                 }
 
                 val message = CreateMessageDTO("", App.context.currentUser!!.id, toUser.id, Date(), content)
-                chatRepository.persist(message, callback)
-                // Send notification to user's device
-                if (toUser.deviceToken != null) {
-                    sendNotification(toUser.id, App.context.currentUser!!, message.content, toUser.deviceToken!!)
+                chatRepository.persist(message) { result, errorMessage ->
+                    if (callback != null) {
+                        callback(result, errorMessage)
+                    }
+
+                    // Send notification if the message was successfully sent
+                    if (result) {
+                        // Send notification to user's device
+                        if (toUser.deviceToken != null) {
+                            sendNotification(toUser.id, App.context.currentUser!!, message.content, toUser.deviceToken!!)
+                        }
+                    }
                 }
             }
         }

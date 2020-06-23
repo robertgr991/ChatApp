@@ -6,6 +6,7 @@ import android.os.Bundle
 import androidx.core.content.ContextCompat.startActivity
 import com.example.chatapp.models.User
 import com.example.chatapp.ui.chat.ChatLogActivity
+import com.example.chatapp.ui.chat.ForwardMessageActivity
 import com.example.chatapp.ui.chat.LatestMessagesActivity
 import com.example.chatapp.ui.chat.NewMessageActivity
 import com.example.chatapp.ui.user.LoginActivity
@@ -49,6 +50,12 @@ class ActivitiesManager {
         fun redirectToProfile(context: Context, userProfile: User) {
             val intent = Intent(context, ProfileActivity::class.java)
             intent.putExtra("user", userProfile)
+            startActivity(context, intent, Bundle())
+        }
+
+        fun redirectToForward(context: Context, message: String) {
+            val intent = Intent(context, ForwardMessageActivity::class.java)
+            intent.putExtra("message", message)
             startActivity(context, intent, Bundle())
         }
     }

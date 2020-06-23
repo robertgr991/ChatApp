@@ -15,6 +15,10 @@ class Utils {
             return simpleDateFormat.format(date)
         }
 
-        fun dateDiffInHours(date1: Date, date2: Date): Long = TimeUnit.MILLISECONDS.toHours(date1.time - date2.time)
+        /**
+         * date1: Smaller date
+         * date2: Bigger date
+         */
+        fun dateDiffInHours(date1: Date, date2: Date): Long = TimeUnit.MILLISECONDS.toHours(date2.time - date1.time)
     }
 }

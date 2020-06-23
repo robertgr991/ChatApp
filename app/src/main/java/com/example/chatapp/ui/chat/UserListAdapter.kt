@@ -14,6 +14,7 @@ import kotlinx.android.synthetic.main.activity_new_message_user.view.*
 
 class UserListAdapter(var users : ArrayList<User>, val context: Context) : RecyclerView.Adapter<UserListAdapter.ViewHolder>() {
     private var onItemClickListener: ((User) -> Unit)? = null
+    private var onBindViewHolderExtra: ((ViewHolder, User) -> Unit)? = null
 
     override fun getItemCount(): Int {
         return users.size
@@ -36,11 +37,19 @@ class UserListAdapter(var users : ArrayList<User>, val context: Context) : Recyc
             Glide.with(context).load(R.drawable.default_avatar).into(holder.image)
         }
 
+        if (onBindViewHolderExtra != null) {
+            onBindViewHolderExtra!!(holder, user)
+        }
+
         if (onItemClickListener != null) {
             holder.itemView.setOnClickListener {
                 onItemClickListener!!(user)
             }
         }
+    }
+
+    fun setOnBindViewHolderExtra(callback: (ViewHolder, User) -> Unit) {
+        onBindViewHolderExtra = callback
     }
 
     fun setOnItemClickListener(callback: (User) -> Unit) {

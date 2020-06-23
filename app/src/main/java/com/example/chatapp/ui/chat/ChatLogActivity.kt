@@ -261,7 +261,7 @@ class ChatLogActivity : AppCompatActivity() {
         // Create the recycler view and the adapter
         messagesAdapter = MessagesAdapter(ArrayList(), this)
         messagesAdapter.setOnOwnMessageClickListener { view, message ->
-            clickOnOwnMessage(view, message)
+            clickOnMessage(view, message, true)
         }
         messagesAdapter.setOnMessageClickListener { view, message ->
             clickOnMessage(view, message)
@@ -389,25 +389,35 @@ class ChatLogActivity : AppCompatActivity() {
         }
     }
 
-    private fun clickOnMessage(view: View, message: Message) {
-        Log.d("MESSAGE", message.toString())
-    }
-
-    private fun clickOnOwnMessage(view: View, message: Message) {
-        Log.d("MESSAGE OWN", message.toString())
+    private fun clickOnMessage(view: View, message: Message, own: Boolean = false) {
         val wrapper = ContextThemeWrapper(this, R.style.PopupMenu)
         val popup = PopupMenu(wrapper, view, Gravity.END)
         popup.inflate(R.menu.chat_log_message_popup_menu)
+
+        /**
+         * If the message is deleted, disable some menu items
+         * that shouldn't be used on a deleted message
+         */
+        if (message.deleted == "true") {
+            popup.menu.findItem(R.id.message_popup_seen).isVisible = false
+            popup.menu.findItem(R.id.message_popup_copy).isVisible = false
+            popup.menu.findItem(R.id.message_popup_forward).isVisible = false
+        }
+
         popup.setOnMenuItemClickListener { item: MenuItem? ->
             when (item!!.itemId) {
                 R.id.message_popup_forward -> {
-                    Log.d("ITEM 1", item.title.toString())
+                    forwardMessage(message.content)
                 }
                 R.id.message_popup_copy -> {
                     copyMessageToClipboard(message)
                 }
                 R.id.message_popup_delete -> {
-                    chatService.deleteMessageForBoth(partner, message)
+                    if (own) {
+                        deleteOwnMessage(partner, message)
+                    } else {
+                        deletePartnerMessage(partner, message)
+                    }
                 }
                 R.id.message_popup_seen -> {
                     showSeen(message)
@@ -419,8 +429,37 @@ class ChatLogActivity : AppCompatActivity() {
         popup.show()
     }
 
+    private fun forwardMessage(content: Any) {
+        ActivitiesManager.redirectToForward(this, content.toString())
+    }
+
+    /**
+     * Partner's messages can be deleted only for current user
+     */
+    private fun deletePartnerMessage(user: User, message: Message) {
+        chatService.deleteMessageForMe(user, message)
+    }
+
+    /**
+     * Delete own message
+     * If message is already deleted for both then completely delete it
+     * Else first delete it for both if possible
+     */
+    private fun deleteOwnMessage(user: User, message: Message) {
+        if (message.deleted == "true") {
+            chatService.deleteMessageForMe(user, message)
+        } else {
+            chatService.deleteMessageForBoth(user, message)
+        }
+    }
+
     // Show "seen" details of a message
     private fun showSeen(message: Message) {
+        if (message.deleted == "true") {
+            toastNotifier.notify(this, "Can't see details of a deleted message", toastNotifier.lengthShort)
+            return
+        }
+
         if (message.seen != "false") {
             if (message.seenAt != null) {
                 toastNotifier.notify(this, "Seen at: ${Utils.formattedDate(message.seenAt)}", toastNotifier.lengthShort)
