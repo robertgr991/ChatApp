@@ -37,9 +37,21 @@
         android:layout_height="65dp"
         android:background="@color/colorAccent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
+
+        <TextView
+            android:id="@+id/forward_message_nr_selected"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/forward_message_initial_text"
+            android:textColor="@color/colorPrimary"
+            android:textSize="16sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/forward_message_btn"
+            app:layout_constraintStart_toEndOf="@+id/forward_message_cancel"
+            app:layout_constraintTop_toTopOf="parent" />
 
         <Button
             android:id="@+id/forward_message_cancel"

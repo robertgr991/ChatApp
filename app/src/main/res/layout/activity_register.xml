@@ -106,5 +106,19 @@
             app:layout_constraintEnd_toEndOf="@+id/register_btn_register"
             app:layout_constraintStart_toStartOf="@+id/register_btn_register"
             app:layout_constraintTop_toBottomOf="@+id/register_btn_register" />
+
+        <TextView
+            android:id="@+id/register_txt_password_explanation"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="24dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="16dp"
+            android:text=""
+            android:textColor="@color/colorTextDark"
+            android:textSize="12sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/register_txt_already_registered" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 </ScrollView>

@@ -32,6 +32,9 @@ class RegisterActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_register)
 
+        // Set password explanation text
+        register_txt_password_explanation.text = CreateUserValidator.passwordExplanationMessage
+
         // Set progress dialog
         progressDialog = ProgressDialog(this)
 

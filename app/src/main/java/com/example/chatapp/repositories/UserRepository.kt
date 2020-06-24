@@ -187,7 +187,7 @@ class UserRepository {
                             imageRef.downloadUrl
                                 .addOnSuccessListener {imageUrl ->
                                     if (imageUrl != null) {
-                                        persist(User(userId, user.username, user.email, imageUrl.toString())) { message ->
+                                        persist(User(id = userId, username = user.username, email = user.email, imageName = imageUrl.toString())) { message ->
                                             if (message == null || message == "") {
                                                 setStatus("online")
                                             }

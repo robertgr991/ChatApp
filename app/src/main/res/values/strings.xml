@@ -6,7 +6,7 @@
     <string name="registerBtn">Register</string>
     <string name="alreadyRegisteredMessage">Already have an account?</string>
     <string name="loginBtn">Login</string>
-    <string name="backToRegister">Back to registration</string>
+    <string name="backToRegister">New account? Register</string>
     <string name="register_txt_select_photo">SELECT PHOTO</string>
     <string name="nav_new_message">New Message</string>
     <string name="nav_sign_out">Sign out</string>
@@ -55,4 +55,7 @@
     <string name="chat_log_typing_text">typing…</string>
     <string name="progress_dialog_text">Loading</string>
     <string name="forward_message">Forward</string>
+    <string name="forward_message_initial_text">0 users selected</string>
+    <string name="forward_message_1_selected">1 user selected</string>
+    <string name="forward_message_multiple_selected">users selected</string>
 </resources>

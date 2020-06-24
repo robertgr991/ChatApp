@@ -8,6 +8,10 @@ class CreateUserValidator: Validator {
     private val passwordMessage = "Invalid password"
     private val invalidInput = "Invalid input"
 
+    companion object {
+         const val passwordExplanationMessage = "Note: The password must be at least 6 characters long, have a letter, number, uppercase letter and one of the following characters: @#$%!-_?&"
+    }
+
     override fun validate(obj: Any): ValidationResponse {
         if (obj is CreateUserDTO) {
             if (obj.username.length < 3 || obj.username.length > 20 || !"[a-zA-Z]+".toRegex().containsMatchIn(obj.username)) {

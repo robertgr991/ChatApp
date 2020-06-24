@@ -109,6 +109,14 @@ class ForwardMessageActivity : AppCompatActivity() {
                 usersToForward[user.id] = user
             }
 
+            val currentSize = usersToForward.size
+
+            if (currentSize == 1) {
+                forward_message_nr_selected.text = getString(R.string.forward_message_1_selected)
+            } else {
+                forward_message_nr_selected.text = "${currentSize} " + getString(R.string.forward_message_multiple_selected)
+            }
+
             userListAdapter.notifyDataSetChanged()
         }
         forward_message_recycler_view.adapter = userListAdapter
