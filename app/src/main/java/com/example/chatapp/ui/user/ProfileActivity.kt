@@ -1,11 +1,12 @@
 package com.example.chatapp.ui.user
 
 import android.app.Activity
-import android.content.DialogInterface
-import android.content.Intent
+import android.content.*
+import android.graphics.Bitmap
 import android.graphics.Typeface
 import android.net.Uri
 import android.os.Bundle
+import android.os.Environment
 import android.os.Parcelable
 import android.provider.MediaStore
 import android.util.Log
@@ -19,15 +20,16 @@ import com.example.chatapp.models.User
 import com.example.chatapp.models.dto.UpdateUserDTO
 import com.example.chatapp.services.UserService
 import com.example.chatapp.ui.ActivitiesManager
-import com.example.chatapp.ui.chat.NewMessageActivity
 import com.example.chatapp.ui.notifiers.ToastNotifier
 import com.example.chatapp.ui.utils.AlertDialogBuilder
 import com.example.chatapp.ui.utils.ProgressDialog
+import com.example.chatapp.utils.Utils
 import com.example.chatapp.validators.UpdateUserValidator
 import kotlinx.android.parcel.Parcelize
-import kotlinx.android.synthetic.main.activity_new_message.*
 import kotlinx.android.synthetic.main.activity_profile.*
 import org.koin.android.ext.android.inject
+import java.io.ByteArrayOutputStream
+import java.io.File
 import kotlin.properties.Delegates
 
 /**
@@ -201,6 +203,11 @@ class ProfileActivity : AppCompatActivity() {
             startActivityForResult(intent, 0)
         }
 
+        profile_take_picture.setOnClickListener {
+            val intent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
+            startActivityForResult(intent, 123)
+        }
+
         profile_btn_remove_image.setOnClickListener {
             profile_btn_remove_image.visibility = View.GONE
             hasTouchedImage = true
@@ -277,6 +284,21 @@ class ProfileActivity : AppCompatActivity() {
             newImageUri = data.data
             val bitmap = MediaStore.Images.Media.getBitmap(contentResolver, newImageUri)
             profile_imgview_image.setImageBitmap(bitmap)
+
+            if (profile_btn_remove_image.visibility == View.GONE) {
+                profile_btn_remove_image.visibility = View.VISIBLE
+            }
+        }
+
+        if (requestCode == 123 && resultCode == Activity.RESULT_OK && data != null) {
+            // Selected image
+            hasTouchedImage = true
+            //newImageUri = data.extras.get("data") as Uri
+
+            var bmp = data.extras.get("data") as Bitmap
+            newImageUri = Utils.getImageUriFromBitmap(App.context,bmp)
+            //val bitmap = MediaStore.Images.Media.getBitmap(contentResolver, newImageUri)
+            profile_imgview_image.setImageBitmap(bmp)
 
             if (profile_btn_remove_image.visibility == View.GONE) {
                 profile_btn_remove_image.visibility = View.VISIBLE

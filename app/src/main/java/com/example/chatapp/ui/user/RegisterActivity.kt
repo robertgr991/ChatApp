@@ -2,19 +2,19 @@ package com.example.chatapp.ui.user
 
 import android.app.Activity
 import android.content.Intent
+import android.graphics.Bitmap
 import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
-import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import com.example.chatapp.App
 import com.example.chatapp.R
 import com.example.chatapp.models.dto.CreateUserDTO
 import com.example.chatapp.services.UserService
 import com.example.chatapp.ui.ActivitiesManager
-import com.example.chatapp.ui.chat.LatestMessagesActivity
 import com.example.chatapp.ui.notifiers.ToastNotifier
 import com.example.chatapp.ui.utils.ProgressDialog
+import com.example.chatapp.utils.Utils
 import com.example.chatapp.validators.CreateUserValidator
 import kotlinx.android.synthetic.main.activity_register.*
 import org.koin.android.ext.android.inject
@@ -43,6 +43,11 @@ class RegisterActivity : AppCompatActivity() {
             val intent = Intent(Intent.ACTION_PICK)
             intent.type = "image/*"
             startActivityForResult(intent, 0)
+        }
+
+        register_take_picture_btn.setOnClickListener{
+            var i=Intent(MediaStore.ACTION_IMAGE_CAPTURE)
+            startActivityForResult(i,123)
         }
 
         register_btn_register.setOnClickListener {
@@ -88,11 +93,18 @@ class RegisterActivity : AppCompatActivity() {
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
 
-        if (requestCode == 0 && resultCode == Activity.RESULT_OK && data != null) {
+        if (requestCode == 0 && resultCode == Activity.RESULT_OK && data != null) { // Check if image was selected from gallery
             // Selected photo
             selectedPhotoUri = data.data
             val bitmap = MediaStore.Images.Media.getBitmap(contentResolver, selectedPhotoUri)
             register_imgview_select_photo.setImageBitmap(bitmap)
+            register_btn_select_photo.alpha = 0f
+        }
+
+        if(requestCode == 123 && data != null) { // Check if image was taken with the camera
+            var bmp = data.extras.get("data") as Bitmap
+            selectedPhotoUri = Utils.getImageUriFromBitmap(App.context,bmp)
+            register_imgview_select_photo.setImageBitmap(bmp)
             register_btn_select_photo.alpha = 0f
         }
     }
