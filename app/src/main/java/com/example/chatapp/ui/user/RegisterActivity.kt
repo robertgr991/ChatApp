@@ -1,12 +1,15 @@
 package com.example.chatapp.ui.user
 
+import android.Manifest
 import android.app.Activity
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.ActivityCompat
 import com.example.chatapp.App
 import com.example.chatapp.R
 import com.example.chatapp.models.dto.CreateUserDTO
@@ -46,8 +49,9 @@ class RegisterActivity : AppCompatActivity() {
         }
 
         register_take_picture_btn.setOnClickListener{
-            var i=Intent(MediaStore.ACTION_IMAGE_CAPTURE)
-            startActivityForResult(i,123)
+            ActivityCompat.requestPermissions(this,
+                arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE),
+                122)
         }
 
         register_btn_register.setOnClickListener {
@@ -106,6 +110,15 @@ class RegisterActivity : AppCompatActivity() {
             selectedPhotoUri = Utils.getImageUriFromBitmap(App.context,bmp)
             register_imgview_select_photo.setImageBitmap(bmp)
             register_btn_select_photo.alpha = 0f
+        }
+    }
+
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
+        if(requestCode == 122) {
+            if (!grantResults.isEmpty()  && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                var i=Intent(MediaStore.ACTION_IMAGE_CAPTURE)
+                startActivityForResult(i,123)
+            }
         }
     }
 }

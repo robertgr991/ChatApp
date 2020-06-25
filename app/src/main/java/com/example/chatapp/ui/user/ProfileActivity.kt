@@ -1,7 +1,9 @@
 package com.example.chatapp.ui.user
 
+import android.Manifest
 import android.app.Activity
 import android.content.*
+import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.Typeface
 import android.net.Uri
@@ -13,6 +15,7 @@ import android.util.Log
 import android.view.MenuItem
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.ActivityCompat
 import com.bumptech.glide.Glide
 import com.example.chatapp.App
 import com.example.chatapp.R
@@ -204,8 +207,9 @@ class ProfileActivity : AppCompatActivity() {
         }
 
         profile_take_picture.setOnClickListener {
-            val intent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
-            startActivityForResult(intent, 123)
+            ActivityCompat.requestPermissions(this,
+                arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE),
+                122)
         }
 
         profile_btn_remove_image.setOnClickListener {
@@ -333,5 +337,14 @@ class ProfileActivity : AppCompatActivity() {
     override fun onDestroy() {
         super.onDestroy()
         newUser = null
+    }
+
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
+        if(requestCode == 122) {
+            if (!grantResults.isEmpty()  && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                var i=Intent(MediaStore.ACTION_IMAGE_CAPTURE)
+                startActivityForResult(i,123)
+            }
+        }
     }
 }
