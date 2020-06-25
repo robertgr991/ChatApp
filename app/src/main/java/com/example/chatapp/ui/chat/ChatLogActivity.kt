@@ -369,23 +369,30 @@ class ChatLogActivity : AppCompatActivity() {
     }
 
     private fun setMessagesSeenInRange(position1: Int, position2: Int) {
+        if (
+            position1 < 0
+            || position2 > messagesAdapter.messages.size - 1
+        ) {
+            return
+        }
+
         thread(start = true) {
             messagesAdapter
                 .messages
                 .slice(IntRange(position1, position2))
                 .forEach { message ->
-                if (message.fromId == partner.id && message.seen == "false") {
-                    chatService.setSeenMessage(partner, message)
-                }
+                    if (message.fromId == partner.id && message.seen == "false") {
+                        chatService.setSeenMessage(partner, message)
+                     }
 
-                if (
-                    partnerLatestMessage != null &&
-                    partnerLatestMessage!!.id == message.id &&
-                    partnerLatestMessage!!.seen == "false"
-                ) {
-                    chatService.setSeenLastMessage(partner, message)
+                    if (
+                        partnerLatestMessage != null &&
+                        partnerLatestMessage!!.id == message.id &&
+                        partnerLatestMessage!!.seen == "false"
+                    ) {
+                        chatService.setSeenLastMessage(partner, message)
+                    }
                 }
-            }
         }
     }
 
@@ -460,10 +467,11 @@ class ChatLogActivity : AppCompatActivity() {
             return
         }
 
-        if (message.seen != "false") {
-            if (message.seenAt != null) {
-                toastNotifier.notify(this, "Seen at: ${Utils.formattedDate(message.seenAt)}", toastNotifier.lengthShort)
-            }
+        if (
+            message.seen != "false"
+            && message.seenAt != null
+        ) {
+            toastNotifier.notify(this, "Seen at: ${Utils.formattedDate(message.seenAt)}", toastNotifier.lengthShort)
         } else {
             toastNotifier.notify(this, "Not yet seen", toastNotifier.lengthShort)
         }

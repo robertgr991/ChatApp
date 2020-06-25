@@ -12,6 +12,7 @@ import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.ValueEventListener
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
+import java.lang.IndexOutOfBoundsException
 import java.util.*
 import kotlin.collections.ArrayList
 
@@ -57,11 +58,15 @@ class ChatRepository {
                 }
 
                 override fun onDataChange(snapshot: DataSnapshot) {
-                    val message = snapshot
-                        .children
-                        .elementAt(0)
-                        .getValue(Message::class.java)
-                    callback(message)
+                    try {
+                        val message = snapshot
+                            .children
+                            .elementAt(0)
+                            .getValue(Message::class.java)
+                        callback(message)
+                    } catch (error: java.lang.IndexOutOfBoundsException) {
+                        callback(null)
+                    }
                 }
             })
     }

@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">ChatApp</string>
+    <string name="app_name">Chatino!</string>
     <string name="usernameHint">Username</string>
     <string name="emailHint">Email</string>
     <string name="passwordHint">Password</string>
@@ -58,4 +58,5 @@
     <string name="forward_message_initial_text">0 users selected</string>
     <string name="forward_message_1_selected">1 user selected</string>
     <string name="forward_message_multiple_selected">users selected</string>
+    <string name="profile_use_camera">Camera</string>
 </resources>

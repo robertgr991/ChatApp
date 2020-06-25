@@ -132,6 +132,7 @@ class ProfileActivity : AppCompatActivity() {
         profile_btn_save_changes.visibility = View.GONE
         profile_btn_remove_image.visibility = View.GONE
         profile_divider_2_own.visibility = View.GONE
+        profile_take_picture.visibility = View.GONE
 
         if (userProfile.bio == null) {
             profile_txt_bio.text = getString(R.string.profile_user_no_bio)
