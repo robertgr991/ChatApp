@@ -24,6 +24,11 @@ class ChatRepository {
     private val baseTyping = "/typing"
 
     fun getAllWithUser(user: User, callback: (ArrayList<Message>) -> Unit) {
+        if (App.context.currentUser == null) {
+            callback(ArrayList())
+            return
+        }
+
         database
             .getReference("${baseMessages}/${App.context.currentUser!!.id}/${user.id}")
             .addListenerForSingleValueEvent(object: ValueEventListener {

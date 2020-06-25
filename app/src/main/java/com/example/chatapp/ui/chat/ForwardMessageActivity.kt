@@ -33,6 +33,7 @@ class ForwardMessageActivity : AppCompatActivity() {
 
     companion object {
         private const val SEARCH_KEY = "SEARCH_KEY"
+        private const val SELECTED_USERS_KEY = "SELECTED_USERS_KEY"
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -45,15 +46,25 @@ class ForwardMessageActivity : AppCompatActivity() {
         // Set progress dialog
         progressDialog = ProgressDialog(this)
 
+        // Create the users adapter
+        userListAdapter = UserListAdapter(users, this)
+
         // Retrieve searched username saved before orientation change
         var filterUsername = ""
 
         if (savedInstanceState != null) {
             val searchedUsername = savedInstanceState.getString(SEARCH_KEY)
+            val alreadySelectedUsers = savedInstanceState.getSerializable(SELECTED_USERS_KEY)
 
             if (searchedUsername != null) {
                 forward_message_search_txt.setText(searchedUsername)
                 filterUsername = searchedUsername
+            }
+
+            if (alreadySelectedUsers != null) {
+                usersToForward = (alreadySelectedUsers as HashMap<String, User>?)!!
+                setSelectedUsersText(usersToForward.size)
+                userListAdapter.notifyDataSetChanged()
             }
         }
 
@@ -94,7 +105,6 @@ class ForwardMessageActivity : AppCompatActivity() {
         fetchUsers(filterUsername)
         // Set the recycler view and adapter
         forward_message_recycler_view.layoutManager = LinearLayoutManager(this)
-        userListAdapter = UserListAdapter(users, this)
         userListAdapter.setOnBindViewHolderExtra { viewHolder, user ->
             if (usersToForward.contains(user.id)) {
                 viewHolder.itemView.setBackgroundColor(ContextCompat.getColor(this, R.color.colorNewLatestMessageRow))
@@ -109,14 +119,7 @@ class ForwardMessageActivity : AppCompatActivity() {
                 usersToForward[user.id] = user
             }
 
-            val currentSize = usersToForward.size
-
-            if (currentSize == 1) {
-                forward_message_nr_selected.text = getString(R.string.forward_message_1_selected)
-            } else {
-                forward_message_nr_selected.text = "${currentSize} " + getString(R.string.forward_message_multiple_selected)
-            }
-
+            setSelectedUsersText(usersToForward.size)
             userListAdapter.notifyDataSetChanged()
         }
         forward_message_recycler_view.adapter = userListAdapter
@@ -158,6 +161,14 @@ class ForwardMessageActivity : AppCompatActivity() {
         }
     }
 
+    private fun setSelectedUsersText(size: Int) {
+        if (size == 1) {
+            forward_message_nr_selected.text = getString(R.string.forward_message_1_selected)
+        } else {
+            forward_message_nr_selected.text = "${size} " + getString(R.string.forward_message_multiple_selected)
+        }
+    }
+
     private fun filterUsersByUsername(searchedUsername: String, users: ArrayList<User>): ArrayList<User> {
         return users.filter { user ->
             user.username
@@ -183,5 +194,12 @@ class ForwardMessageActivity : AppCompatActivity() {
                 }
             }
         }
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        // Save searched username to restore filtered users after orientation change
+        outState.putString(SEARCH_KEY, forward_message_search_txt.text.toString())
+        outState.putSerializable(SELECTED_USERS_KEY, usersToForward)
     }
 }
