@@ -18,3 +18,4 @@ Cerinte implementate:
 - Web services (Retrofit, Firebase)
 - Dependency injection (Koin)
 - Persistenta datelor folosind baze de date
+- Implementat o animatie folosind ObjectAnimator si una folosind MotionLayout
