@@ -3,6 +3,7 @@ package com.example.chatapp.ui.user
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
+import android.view.animation.AnimationUtils
 import androidx.appcompat.app.AppCompatActivity
 import com.example.chatapp.App
 import com.example.chatapp.R
@@ -37,7 +38,12 @@ class LoginActivity : AppCompatActivity() {
             if (isLoginDisabled) {
                 return@setOnClickListener
             }
+            val animation = AnimationUtils.loadAnimation(
+                this,
+                R.anim.bounce
+            )
 
+            login_btn_login.startAnimation(animation)
             val email = login_txt_email.text.toString()
             val password = login_txt_password.text.toString()
             val loginUser = UserLoginDTO(email, password)

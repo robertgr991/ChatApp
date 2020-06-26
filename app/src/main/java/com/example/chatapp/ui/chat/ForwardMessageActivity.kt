@@ -4,6 +4,7 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
+import android.view.animation.AnimationUtils
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.chatapp.App
@@ -129,6 +130,13 @@ class ForwardMessageActivity : AppCompatActivity() {
                 onBackPressed()
                 return@setOnClickListener
             }
+
+            val animation = AnimationUtils.loadAnimation(
+                this,
+                R.anim.bounce
+            )
+
+            forward_message_btn.startAnimation(animation)
 
             forward_message_btn.isEnabled = false
             forward_message_btn.background = this.getDrawable(R.drawable.rounded_btn_disabled)
