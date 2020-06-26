@@ -40,6 +40,12 @@ class LoginActivity : AppCompatActivity() {
 
             val email = login_txt_email.text.toString()
             val password = login_txt_password.text.toString()
+
+            if (email.isEmpty() || password.isEmpty()) {
+                toastNotifier.notify(this, "Email or password is empty", toastNotifier.lengthLong)
+                return@setOnClickListener
+            }
+
             val loginUser = UserLoginDTO(email, password)
             // Disable button until the process if finished
             isLoginDisabled = true
