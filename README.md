@@ -19,3 +19,5 @@ Cerinte implementate:
 - Dependency injection (Koin)
 - Persistenta datelor folosind baze de date
 - Implementat o animatie folosind ObjectAnimator si una folosind MotionLayout
+
+Link prezentare Confluence: https://chatino.atlassian.net/l/c/i2ARM0m7
