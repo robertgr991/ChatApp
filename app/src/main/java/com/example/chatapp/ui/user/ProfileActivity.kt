@@ -14,6 +14,7 @@ import android.provider.MediaStore
 import android.util.Log
 import android.view.MenuItem
 import android.view.View
+import android.view.animation.AnimationUtils
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import com.bumptech.glide.Glide
@@ -224,6 +225,12 @@ class ProfileActivity : AppCompatActivity() {
             if (!isSaveEnabled()) {
                 return@setOnClickListener
             }
+            val animation = AnimationUtils.loadAnimation(
+                this,
+                R.anim.bounce
+            )
+
+            profile_btn_save_changes.startAnimation(animation)
 
             disableSave()
             val newBio = profile_txt_bio_own.text.toString()

@@ -8,6 +8,7 @@ import android.graphics.Bitmap
 import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
+import android.view.animation.AnimationUtils
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import com.example.chatapp.App
@@ -58,7 +59,11 @@ class RegisterActivity : AppCompatActivity() {
             if (isRegisterDisabled) {
                 return@setOnClickListener
             }
-
+            val animation = AnimationUtils.loadAnimation(
+            this,
+            R.anim.bounce
+            )
+            register_btn_register.startAnimation(animation)
             val username = register_txt_username.text.toString()
             val email = register_txt_email.text.toString()
             val password = register_txt_password.text.toString()

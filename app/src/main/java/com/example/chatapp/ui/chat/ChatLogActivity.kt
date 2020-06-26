@@ -11,6 +11,7 @@ import android.view.ContextThemeWrapper
 import android.view.Gravity
 import android.view.MenuItem
 import android.view.View
+import android.view.animation.AnimationUtils
 import android.widget.PopupMenu
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
@@ -289,6 +290,12 @@ class ChatLogActivity : AppCompatActivity() {
             if (isSendDisabled) {
                 return@setOnClickListener
             }
+
+            val animation = AnimationUtils.loadAnimation(
+                this,
+                R.anim.bounce
+            )
+            chat_log_btn_send.startAnimation(animation)
 
             // Disable the button until the process finishes
             disableSendBtn()
